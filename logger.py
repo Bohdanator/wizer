@@ -8,7 +8,7 @@ class LogError(Exception):
 
 def args_to_keys(arg, include=False, chain=True):
     if type(arg) == type(list()) or type(arg) == type(tuple()):
-        l = list(map(args_to_keys, arg)) if chain else args_to_keys(arg)
+        l = list(map(lambda x: args_to_keys(x, include, chain), arg))
     elif type(arg) == type(dict()):
         l = list(map(args_to_keys, arg.values())) \
             if chain else dict(map(lambda x: (x, args_to_keys(x, include, chain)), arg))
@@ -30,7 +30,7 @@ def _log_call(origin, call, args=[], kwargs={}, result=None, call_type='return')
     entry = dict(map(lambda x: (x, state[x].__log_repr__()), state))
     affected_objects = list(
         filter(
-            lambda x: x is not None and x in state, 
+            lambda x: x is not None and x in state.keys(), 
             args_to_keys(args) + args_to_keys(kwargs)
         )
     )
@@ -81,7 +81,7 @@ def log_exit(*iterable):
 def transform_into_logger(cls, repr_fn=None, key_fn=None, excluded=[], enter_on_init=False):
     """Transforms a class into a logger that logs 
     every attribute call inside a with statement"""
-    log_key_fn = key_fn if key_fn is not None else repr
+    log_key_fn = key_fn if key_fn is not None else str
     decorated_class = decorate_attributes_parametrized_immutable(
         cls,
         get_callable_attr_decorator,

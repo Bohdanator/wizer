@@ -53,9 +53,9 @@ def is_inside(point, polygon):
     return False
 
 @lg.logged_function
-def triangulate_polygon(polygon):
+def triangulate_polygon(vertices):
     # verices are sorted
-    vertices = list(polygon.vertices)
+    polygon = Polygon2V(vertices)
     if len(vertices) <= 3:
         return []
     b = 0
@@ -77,9 +77,7 @@ def triangulate_polygon(polygon):
     if len(inside) == 0:
         # we have an ear
         diagonal = Segment2V(vertices[a], vertices[c])
-        other = Polygon2V(([] if c == 0 else vertices[c:]) + vertices[:(a+1)])
-        t = triangulate_polygon(other)
-        lg.log_exit(other)
+        t = triangulate_polygon(([] if c == 0 else vertices[c:]) + vertices[:(a+1)])
         return t + [diagonal]
     else:
         # find vertex closest to B
@@ -95,14 +93,11 @@ def triangulate_polygon(polygon):
                 lg.log_exit(diagonal)
         x = min(b, n)
         y = max(b, n)
-        p1 = Polygon2V(vertices[x:y+1])
-        p2 = Polygon2V(vertices[y:] + vertices[:(x+1)])
-        t1, t2 = triangulate_polygon(p1), triangulate_polygon(p2)
-        lg.log_exit(p1, p2)
+        t1, t2 = triangulate_polygon(vertices[x:y+1]), triangulate_polygon(vertices[y:] + vertices[:(x+1)])
+        lg.log_exit(polygon)
         return t1 + t2 + [m]
 
 vertices = list(map(lambda x: Point2V(*x), data))
-polygon = Polygon2V(vertices)
-triangulation = triangulate_polygon(polygon)
+triangulation = triangulate_polygon(vertices)
 
 visualize(lg.log)

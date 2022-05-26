@@ -165,7 +165,6 @@ def draw_frame(canvas: tk.Canvas, entry):
         draw_entity(canvas, ot, orep, color="blue", width=20)
     try:
         if result in state:
-            print(result)
             rt, rrep = state[result]
             draw_entity(canvas, rt, rrep, color="green", width=20)
     except TypeError as e:
@@ -176,7 +175,7 @@ def draw_frame(canvas: tk.Canvas, entry):
         at, arep = state[key]
         draw_entity(canvas, at, arep, color=affected_color)
     if originator_key == '___call':
-        draw_call(canvas, 'function call', call, args, kwargs, result)
+        draw_call(canvas, f'function call ({call_type})', call, args, kwargs, result)
     else:
         draw_call(canvas, state[originator_key], call, args, kwargs, result)
 
