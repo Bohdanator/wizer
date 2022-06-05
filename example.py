@@ -22,9 +22,11 @@ Segment2V = lg.transform_into_logger(
     repr_fn=lambda s: ('segment', [[s.source().x(), s.source().y()], [s.target().x(), s.target().y()]]), excluded=['source', 'target'],
     enter_on_init=True,
 )
+def polygon_key(p): return repr(p).replace('\n', '\\n')
 Polygon2V = lg.transform_into_logger(
     sg.Polygon, 
     repr_fn=lambda p: ('polygon', [[x, y] for x,y in p.coords]),
+    key_fn=polygon_key,
     enter_on_init=True,
 )
 

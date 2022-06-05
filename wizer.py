@@ -154,7 +154,7 @@ def draw_frame(canvas: tk.Canvas, entry):
     originator_key, call, args, kwargs, result, affected, state, call_type = entry
     entities = []
     images = []
-    affected_color = 'red' if call_type == 'return' else 'orange'
+    affected_color = 'red' if call_type == 'return' else '#FFBF00'
     for key in state:
         if key == originator_key or key in affected or key == result:
             continue
