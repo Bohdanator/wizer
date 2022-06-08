@@ -21,6 +21,6 @@ def left_most(points):
     return p
 
 def triangulate(points):
-    poly = PolygonV(points)
-    convex = left_most(points)
+    pass
+    # TODO
     
