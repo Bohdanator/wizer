@@ -3,6 +3,12 @@ import tkinter.font as tkfont
 from PIL import Image, ImageTk, ImageDraw
 from math import floor
 
+def point_repr(x): return ('point', (float(x.x), float(x.y)))
+
+def segment_repr(x): return ('segment', (point_repr(x.p1)[1], point_repr(x.p2)[1]))
+
+def polygon_repr(p): return ('polygon', list(map(lambda x: point_repr(x)[1], p.vertices)))
+
 _log = []
 ind = 0
 

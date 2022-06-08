@@ -1,5 +1,5 @@
 import skgeom as sg
-import logger as lg
+import tracer.logger as lg
 from wizer import visualize
 
 # Triangulation using the incorrect scaling heuristic
