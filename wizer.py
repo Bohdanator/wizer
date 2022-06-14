@@ -114,7 +114,7 @@ def draw_call(canvas: tk.Canvas, origin, call, args=[], kwargs={}, result=None):
     draw_text.y = call_y
 
     draw_text(text=f'{origin}', color='red')
-    draw_text(text=f'.{call}', color='red')
+    draw_text(text=f'{call}', color='red')
     if len(args) > 0:
         draw_text(text='args')
         for (i, arg) in enumerate(args):
@@ -169,9 +169,9 @@ def draw_frame(canvas: tk.Canvas, entry):
         at, arep = state[key]
         draw_entity(canvas, at, arep, color=affected_color)
     if originator_key == '___call':
-        draw_call(canvas, f'function call ({call_type})', call, args, kwargs, result)
+        draw_call(canvas, 'function call', f'call ({call_type})', args, kwargs, result)
     else:
-        draw_call(canvas, f'{state[originator_key]} ({call_type})', call, args, kwargs, result)
+        draw_call(canvas, state[originator_key], f'{call} ({call_type})', args, kwargs, result)
 
 cvs = None
 

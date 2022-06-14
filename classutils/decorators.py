@@ -22,6 +22,8 @@ def decorate_attributes_parametrized_immutable(
                 return get_non_callables_decorator(self, __name)(val)
             return val
 
+    DecoratedClass.__name__ = cls.__name__
+    # TODO other properties
     return DecoratedClass         
 
 def decorate_attributes_immutable(

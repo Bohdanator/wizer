@@ -78,6 +78,5 @@ tr = triangulate(poly)
 for seg in tr:
     print(*list(map(float, [seg.p1.x, seg.p1.y, seg.p2.x, seg.p2.y])))
 
-for x in lg.log: print('\n', x)
 visualize(lg.log)
     
