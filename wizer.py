@@ -3,12 +3,6 @@ import tkinter.font as tkfont
 from PIL import Image, ImageTk, ImageDraw
 from math import floor
 
-def point_repr(x): return ('point', (float(x.x), float(x.y)))
-
-def segment_repr(x): return ('segment', (point_repr(x.p1)[1], point_repr(x.p2)[1]))
-
-def polygon_repr(p): return ('polygon', list(map(lambda x: point_repr(x)[1], p.vertices)))
-
 _log = []
 ind = 0
 
@@ -28,15 +22,8 @@ mouse_y = 0
 entities = []
 images = []
 
-root = tk.Tk()
-root.title('Wizer')
-font = tkfont.Font(
-    root=root,
-    family="Times",
-    size=-font_height,
-    weight=tkfont.BOLD,
-    slant=tkfont.ROMAN,
-)
+root = None
+font = None
 
 def computed_x(x):
     cx = float(str(x))
@@ -158,6 +145,7 @@ def draw_frame(canvas: tk.Canvas, entry):
     global entities, images
     canvas.delete("all")
     originator_key, call, args, kwargs, result, affected, state, call_type = entry
+    print(call, args, result)
     entities = []
     images = []
     affected_color = 'red' if call_type == 'return' else '#FFBF00'
@@ -183,16 +171,10 @@ def draw_frame(canvas: tk.Canvas, entry):
     if originator_key == '___call':
         draw_call(canvas, f'function call ({call_type})', call, args, kwargs, result)
     else:
-        draw_call(canvas, state[originator_key], call, args, kwargs, result)
+        draw_call(canvas, f'{state[originator_key]} ({call_type})', call, args, kwargs, result)
 
+cvs = None
 
-cvs = tk.Canvas(
-    root,
-    background="white",
-    height=height,
-    width=width,
-)
-cvs.pack()
 def handle_right(event): 
     global ind
     ind = min(ind + 1, len(_log)-1)
@@ -211,7 +193,7 @@ def handle_mouse_wheel(event):
         zoom += 10
     draw_frame(cvs, _log[ind])
 
-def handle_mouse_move(clicked):
+def handle_mouse_move(cvs, clicked):
     def callback(event):
         global mouse_x, mouse_y, cam_x, cam_y, entities
         dx = (mouse_x - event.x)
@@ -225,24 +207,42 @@ def handle_mouse_move(clicked):
         mouse_y = event.y
     return callback
 
-def change_zoom(d):
+def change_zoom(cvs, d):
     global zoom
     zoom = max(20, zoom + d)
     draw_frame(cvs, _log[ind])
 
-root.bind("<Key-d>", handle_right)
-root.bind("<Key-a>", handle_left)
-root.bind("<Key-Right>", handle_right)
-root.bind("<Key-Left>", handle_left)
-root.bind('<Control-Button-4>', handle_mouse_wheel)
-root.bind('<Control-Button-5>', handle_mouse_wheel)
-root.bind('<B1-Motion>', handle_mouse_move(True))
-root.bind('<Motion>', handle_mouse_move(False))
-root.bind('<Key-Up>', lambda event: change_zoom(10))
-root.bind('<Key-Down>', lambda event: change_zoom(-10))
-
 def visualize(log):
-    global _log
+    global _log, font, cvs, root
     _log = log
+
+    root = tk.Tk()
+    root.title('Wizer')
+    font = tkfont.Font(
+        root=root,
+        family="Mono",
+        size=-font_height,
+        weight=tkfont.BOLD,
+        slant=tkfont.ROMAN,
+    )
+    cvs = tk.Canvas(
+        root,
+        background="white",
+        height=height,
+        width=width,
+    )
+    cvs.pack()
+
+    root.bind("<Key-d>", handle_right)
+    root.bind("<Key-a>", handle_left)
+    root.bind("<Key-Right>", handle_right)
+    root.bind("<Key-Left>", handle_left)
+    root.bind('<Control-Button-4>', handle_mouse_wheel)
+    root.bind('<Control-Button-5>', handle_mouse_wheel)
+    root.bind('<B1-Motion>', handle_mouse_move(cvs, True))
+    root.bind('<Motion>', handle_mouse_move(cvs, False))
+    root.bind('<Key-Up>', lambda event: change_zoom(cvs, 10))
+    root.bind('<Key-Down>', lambda event: change_zoom(cvs, -10))
+
     draw_frame(cvs, _log[ind])
     tk.mainloop()

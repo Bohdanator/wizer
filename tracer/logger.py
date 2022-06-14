@@ -165,7 +165,12 @@ def create_logger_from(cls, repr_fn=None, key_fn=None, excluded=[], enter_on_ini
     class LoggedClass(cls):
         def __new__(cls, *args, **kwargs):
             instance = super().__new__(cls, *args, **kwargs)
-            setattr(instance, '__class__', decorate_attributes_parametrized_immutable(instance.__class__, get_callable_attr_decorator, exclusion=excl))
+            setattr(instance, '__class__', \
+                decorate_attributes_parametrized_immutable(
+                    instance.__class__, 
+                    get_callable_attr_decorator, 
+                    exclusion=excl)
+                )
             setattr(instance.__class__, '__log_repr__', _log_repr)
             setattr(instance.__class__, '__log_key__', _log_key)
             setattr(instance.__class__, '__enter__', _enter)
